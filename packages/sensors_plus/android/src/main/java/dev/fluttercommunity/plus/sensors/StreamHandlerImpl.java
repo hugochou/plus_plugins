@@ -14,15 +14,19 @@ class StreamHandlerImpl implements EventChannel.StreamHandler {
 
   private SensorEventListener sensorEventListener;
   private final SensorManager sensorManager;
-  private final Sensor sensor;
+  private final int sensorType;
+  private Sensor sensor;
 
   StreamHandlerImpl(SensorManager sensorManager, int sensorType) {
+    this.sensorType = sensorType;
     this.sensorManager = sensorManager;
-    sensor = sensorManager.getDefaultSensor(sensorType);
   }
 
   @Override
   public void onListen(Object arguments, EventChannel.EventSink events) {
+    if (sensor == null) {
+      sensor = sensorManager.getDefaultSensor(sensorType);
+    }
     sensorEventListener = createSensorEventListener(events);
     sensorManager.registerListener(sensorEventListener, sensor, sensorManager.SENSOR_DELAY_NORMAL);
   }
